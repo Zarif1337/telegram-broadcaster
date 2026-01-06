@@ -17,7 +17,7 @@ def run_task():
         
         # 2. Wait 5 Minutes (keep the script alive)
         print("Waiting 5 minutes...")
-        time.sleep(300) 
+        time.sleep(10) 
         
         # 3. Delete Message
         print("Deleting message...")
