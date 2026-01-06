@@ -1,0 +1,32 @@
+
+name: 20 Minute Broadcaster
+
+on:
+  schedule:
+    # This weird code means "Every 20 minutes"
+    - cron: '*/20 * * * *'
+  # This allows you to run it manually to test if you want
+  workflow_dispatch:
+
+jobs:
+  broadcast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run the broadcaster
+        env:
+          # This connects the safe secrets to the python script
+          MY_BOT_TOKEN: ${{ secrets.MY_BOT_TOKEN }}
+          MY_CHANNEL_ID: ${{ secrets.MY_CHANNEL_ID }}
+        run: python main.py
+        
