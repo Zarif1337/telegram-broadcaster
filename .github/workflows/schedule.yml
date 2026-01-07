@@ -1,12 +1,15 @@
-
-name: 20 Minute Broadcaster
+name: 30 Minute Broadcaster
 
 on:
   schedule:
-    # This weird code means "Every 20 minutes"
-    - cron: '*/20 * * * *'
-  # This allows you to run it manually to test if you want
+    # CHANGED: This now runs at minute 0 and minute 30 of every hour
+    - cron: '*/30 * * * *'
+  
+  # This allows you to force-run it manually for testing
   workflow_dispatch:
+
+permissions:
+  contents: write  # IMPORTANT: This gives the bot permission to save the ID file
 
 jobs:
   broadcast:
@@ -25,8 +28,7 @@ jobs:
 
       - name: Run the broadcaster
         env:
-          # This connects the safe secrets to the python script
+          # Connecting your secrets
           MY_BOT_TOKEN: ${{ secrets.MY_BOT_TOKEN }}
           MY_CHANNEL_ID: ${{ secrets.MY_CHANNEL_ID }}
         run: python main.py
-        
