@@ -1,15 +1,16 @@
-name: 30 Minute Broadcaster
+name: 5 Minute Broadcaster
 
 on:
   schedule:
-    # CHANGED: This now runs at minute 0 and minute 30 of every hour
-    - cron: '*/30 * * * *'
+    # প্রতি ৫ মিনিটে (০, ৫, ১০, ১৫... এভাবে চলবে)
+    - cron: '*/5 * * * *'
   
-  # This allows you to force-run it manually for testing
+  # ম্যানুয়ালি রান করার অপশন
   workflow_dispatch:
 
+# গিটহাবে ফাইল সেভ করার পারমিশন (খুব জরুরি)
 permissions:
-  contents: write  # IMPORTANT: This gives the bot permission to save the ID file
+  contents: write
 
 jobs:
   broadcast:
@@ -28,7 +29,9 @@ jobs:
 
       - name: Run the broadcaster
         env:
-          # Connecting your secrets
+          # সিক্রেটগুলো কোডের সাথে কানেক্ট করা হচ্ছে
           MY_BOT_TOKEN: ${{ secrets.MY_BOT_TOKEN }}
           MY_CHANNEL_ID: ${{ secrets.MY_CHANNEL_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
         run: python main.py
