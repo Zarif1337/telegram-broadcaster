@@ -1,9 +1,9 @@
-name: 59 Minute Broadcaster
+name: 1 Minute Broadcaster
 
 on:
   schedule:
     # প্রতি ৫ মিনিটে (০, ৫, ১০, ১৫... এভাবে চলবে)
-    - cron: '*/59 * * * *'
+    - cron: '*/0.2 * * * *'
   
   # ম্যানুয়ালি রান করার অপশন
   workflow_dispatch:
