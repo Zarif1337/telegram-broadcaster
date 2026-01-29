@@ -36,7 +36,7 @@ generation_config = {
 }
 
 model = genai.GenerativeModel(
-  model_name="gemini-3-flash-preview",
+  model_name="gemma-3-27b-it",
   generation_config=generation_config,
   system_instruction=system_prompt
 )
