@@ -1,5 +1,5 @@
 {
-    "last_topic": "Motivation",
+    "last_topic": "Chatting",
     "messages": [
         {
             "id": 872,
@@ -10,6 +10,11 @@
             "id": 874,
             "type": "important",
             "time": "2026-02-02T14:25:12.033032+06:00"
+        },
+        {
+            "id": 875,
+            "type": "casual",
+            "time": "2026-02-02T14:52:37.500370+06:00"
         }
     ]
 }
