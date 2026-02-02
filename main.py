@@ -44,9 +44,9 @@ generation_config = {
 
 # Gemma 3 বা Flash মডেল
 try:
-    model = genai.GenerativeModel("gemma-3-27b-it", generation_config=generation_config, system_instruction=system_prompt)
+    model = genai.GenerativeModel("gemini-3-flash-preview", generation_config=generation_config, system_instruction=system_prompt)
 except:
-    model = genai.GenerativeModel("gemini-1.5-flash", generation_config=generation_config, system_instruction=system_prompt)
+    model = genai.GenerativeModel("gemini-3-pro", generation_config=generation_config, system_instruction=system_prompt)
 
 # --- ৩. ভেরিয়েবল ও ডাটাবেস ---
 HISTORY_FILE = "history.json"
