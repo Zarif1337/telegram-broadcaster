@@ -40,7 +40,7 @@ system_prompt = """
 generation_config = {
   "temperature": 1.1, # একটু বেশি হিউম্যান ও র‍্যান্ডম হওয়ার জন্য
   "top_p": 0.95,
-  "max_output_tokens": 1024,
+  "max_output_tokens": 8192,
 }
 
 # Gemma 3 বা Flash মডেল
