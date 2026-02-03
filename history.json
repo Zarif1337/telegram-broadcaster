@@ -1,5 +1,5 @@
 {
-    "last_topic": "Tech Tutorial Series",
+    "last_topic": "News Discussion",
     "messages": [
         {
             "id": 872,
@@ -55,6 +55,11 @@
             "id": 889,
             "type": "important",
             "time": "2026-02-03T15:51:24.710481+06:00"
+        },
+        {
+            "id": 890,
+            "type": "casual",
+            "time": "2026-02-03T16:48:49.970641+06:00"
         }
     ]
 }
