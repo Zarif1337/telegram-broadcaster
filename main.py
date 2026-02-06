@@ -14,23 +14,21 @@ import time
 TELEGRAM_TOKEN = os.environ['MY_BOT_TOKEN']
 CHANNEL_ID = os.environ['MY_CHANNEL_ID']
 GEMINI_KEY = os.environ.get('GEMINI_API_KEY')
-WEATHER_KEY = os.environ.get('WEATHER_API_KEY')
+WEATHER_KEY = os.environ.get('WEATHER_API_KEY') # আপনার নতুন কি (Key)
 
-# --- ২. Git Sync ফাংশন (বটের স্মৃতি রক্ষক) ---
+# --- ২. Git Sync ফাংশন ---
 def git_pull():
-    """শুরুতেই গিটহাব থেকে লেটেস্ট মেমোরি নামাবে"""
     try:
-        print("📥 Pulling latest history from GitHub...")
+        print("📥 Pulling latest history...")
         subprocess.run(["git", "config", "--global", "user.email", "bot@github.com"])
         subprocess.run(["git", "config", "--global", "user.name", "TeleBot"])
-        subprocess.run(["git", "pull", "--rebase"]) # Rebase ensures no merge conflicts
+        subprocess.run(["git", "pull", "--rebase"])
     except Exception as e:
         print(f"Git Pull Error: {e}")
 
 def git_push(file_name, commit_msg):
-    """কাজ শেষে মেমোরি আপলোড করবে"""
     try:
-        print("📤 Pushing updated history to GitHub...")
+        print("📤 Pushing update...")
         subprocess.run(["git", "add", file_name])
         subprocess.run(["git", "commit", "-m", commit_msg])
         subprocess.run(["git", "push"])
@@ -40,27 +38,25 @@ def git_push(file_name, commit_msg):
 # --- ৩. Gemini সেটআপ ---
 genai.configure(api_key=GEMINI_KEY)
 
-# এখানে কন্টিনিউটি লজিক দেওয়া হয়েছে
 system_prompt = """
-তুমি 'NoN-Technical' টেলিগ্রাম চ্যানেলের একজন হিউম্যান এডমিন। তোমার নাম জারা (বা যা খুশি ভাবতে পারো, কিন্তু রোবট বলবে না)।
-তোমার অডিয়েন্স: বিগিনার।
-ভাষা: Banglish (বাংলা + ইংলিশ মিক্স)। টোন: ফ্রেন্ডলি, ক্যাজুয়াল, মাঝেমধ্যে হালকা টাইপো করবে।
+তুমি 'NoN-Technical' টেলিগ্রাম চ্যানেলের একজন হিউম্যান এডমিন। তোমার নাম জারা।
+অডিয়েন্স: বিগিনার টেক লাভার। এলাকা: ধুনট, রাজশাহী।
+ভাষা: Banglish (বাংলা + ইংলিশ মিক্স)। টোন: ফ্রেন্ডলি, ক্যাজুয়াল।
 
-কড়া নির্দেশ (Strict Instructions):
-১. কখনো নিজেকে নতুন করে পরিচয় দিবে না (যেমন: "আমি তোমাদের মেন্টর", "আজকে আমি বলবো" - এসব বাদ)।
-২. ধরে নিবে তুমি ১০ মিনিট আগেই তাদের সাথে কথা বলেছ। তাই সরাসরি টপিকে চলে যাবে।
-৩. আগের পোস্টের সাথে মিল রেখে কথা বলবে।
-৪. লেখার স্টাইল চ্যাটিং এর মতো হবে, প্রবন্ধ বা আর্টিকেলের মতো না।
+কড়া নির্দেশ:
+১. নিজেকে নতুন করে পরিচয় দিবে না।
+২. আবহাওয়া নিয়ে কথা বললে 'ধুনট' বা 'আমাদের এলাকায়' শব্দটি ব্যবহার করবে।
+৩. চ্যাটিং স্টাইলে লিখবে।
 """
 
 generation_config = {
   "temperature": 1.1, 
   "top_p": 0.95,
-  "max_output_tokens": 8192, # টোকেন বাড়ানো হয়েছে যাতে মাঝপথে না থামে
+  "max_output_tokens": 8192,
 }
 
-# মডেল সিলেকশন (Safe Model)
-model = genai.GenerativeModel("gemini-3-flash-preview", generation_config=generation_config, system_instruction=system_prompt)
+# মডেল (Safe Model)
+model = genai.GenerativeModel("gemini-1.5-flash", generation_config=generation_config, system_instruction=system_prompt)
 
 # --- ৪. ভেরিয়েবল ও ফাইল ---
 HISTORY_FILE = "history.json"
@@ -69,74 +65,74 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 # --- ৫. হেল্পার ফাংশন ---
 
+def get_weather():
+    """আপনার নির্দিষ্ট লোকেশনের আবহাওয়া আনবে"""
+    if not WEATHER_KEY:
+        return None
+    try:
+        # Dhunat Coordinates
+        lat = "24.6440661"
+        lon = "89.4987189"
+        url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={WEATHER_KEY}&units=metric"
+        
+        response = requests.get(url).json()
+        
+        # ডাটা প্রসেসিং
+        temp = response['main']['temp']
+        feels_like = response['main']['feels_like']
+        condition = response['weather'][0]['description']
+        humidity = response['main']['humidity']
+        
+        return f"Location: Dhunat, Rajshahi. Temp: {temp}°C, Feels like: {feels_like}°C, Sky: {condition}, Humidity: {humidity}%"
+    except Exception as e:
+        print(f"Weather Error: {e}")
+        return None
+
 def load_history():
     if os.path.exists(HISTORY_FILE):
         try:
             with open(HISTORY_FILE, "r") as f:
                 return json.load(f)
-        except:
-            pass
-    return {"last_topic": "Intro", "recent_posts": []}
+        except: pass
+    return {"recent_posts": []}
 
 def save_history(data):
     with open(HISTORY_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
 def clean_old_messages(history):
-    """৩ দিনের পুরনো এবং ক্যাজুয়াল মেসেজ ডিলিট করবে"""
     now = datetime.now(bd_timezone)
     valid_posts = []
-    
     for post in history.get("recent_posts", []):
         try:
             post_time = datetime.fromisoformat(post["time"])
-            msg_id = post["id"]
-            
-            # ৩ দিন পার হলে অথবা টাইপ 'casual' হলে ডিলিট
             is_expired = (now - post_time) > timedelta(days=3)
-            is_casual = post.get("type", "casual") == "casual"
+            is_casual = post.get("type") == "casual"
             
             if is_expired or is_casual:
-                print(f"🗑 Deleting message {msg_id} ({post.get('type')})")
-                try:
-                    bot.delete_message(CHANNEL_ID, msg_id)
-                except Exception as e:
-                    print(f"Delete failed: {e}")
+                try: bot.delete_message(CHANNEL_ID, post["id"])
+                except: pass
             else:
                 valid_posts.append(post)
-        except Exception as e:
-            print(f"Error processing post: {e}")
-            
+        except: pass
     history["recent_posts"] = valid_posts
     return history
 
 def ask_ai(task, context_list):
-    """AI কে আগের স্মৃতি মনে করিয়ে প্রশ্ন করা"""
-    # গত ৩টি পোস্টের সামারি তৈরি
     past_context = "\n".join([f"- {p['topic']}: {p['summary']}" for p in context_list[-3:]])
-    
-    full_prompt = f"""
-    CONTEXT (What you posted recently):
-    {past_context}
-    
-    CURRENT TASK:
-    {task}
-    
-    REMEMBER: Do NOT introduce yourself. Just continue the flow.
-    """
+    full_prompt = f"CONTEXT:\n{past_context}\n\nCURRENT TASK:\n{task}\n\nDo NOT introduce yourself."
     try:
         response = model.generate_content(full_prompt)
         return response.text.strip()
-    except Exception as e:
-        print(f"AI Error: {e}")
-        return None
+    except: return None
 
 def get_prayer_times():
     try:
+        # ধুনটের জন্য স্থানাঙ্ক ব্যবহার করে নামাজের সময় আনা ভালো, তবে ঢাকা দিয়েও চলে (১-২ মিনিট ডিফারেন্স)
+        # এখানে আমরা স্ট্যান্ডার্ড ঢাকার টাইমিং রাখছি, চাইলে কোঅর্ডিনেট বসাতে পারেন
         res = requests.get("http://api.aladhan.com/v1/timingsByCity?city=Dhaka&country=Bangladesh&method=1").json()
         return res['data']['timings']
-    except:
-        return None
+    except: return None
 
 def get_latest_news():
     try:
@@ -147,27 +143,19 @@ def get_latest_news():
 # --- ৬. মেইন রানার ---
 
 def run_task():
-    # ধাপ ১: শুরুতেই মেমোরি সিংক করা (Force Git Pull)
     git_pull()
-    
     history = load_history()
-    # আগের আবর্জনা পরিষ্কার
     history = clean_old_messages(history)
     
     now = datetime.now(bd_timezone)
     current_hour = now.hour
-    
-    # লাস্ট টপিক এবং রিসেন্ট পোস্ট লিস্ট
     recent_posts = history.get("recent_posts", [])
-    last_topic = recent_posts[-1]["topic"] if recent_posts else "None"
     
     final_msg = ""
     msg_type = "casual"
     current_topic = "Chat"
-    msg_summary = "Just chatting"
-    
-    # ধাপ ২: কন্টেন্ট ডিসিশন
-    
+    msg_summary = "General"
+
     # A. নামাজ (Priority)
     prayer_times = get_prayer_times()
     priority = False
@@ -178,50 +166,55 @@ def run_task():
                 p_time = datetime.strptime(time_str, "%H:%M").time()
                 p_dt = now.replace(hour=p_time.hour, minute=p_time.minute, second=0)
                 if abs((now - p_dt).total_seconds()) <= 900:
-                    final_msg = ask_ai(f"এখন {prayer_map[waqt]} নামাজের সময়। ছোট করে নামাজে ডাকো।", recent_posts)
+                    final_msg = ask_ai(f"এখন {prayer_map[waqt]} নামাজের সময়। ধুনটের বন্ধুদের নামাজে ডাকো।", recent_posts)
                     priority = True
-                    msg_type = "casual" # নামাজ রিমাইন্ডার সেভ রাখার দরকার নেই
                     break
     
     # B. অন্যান্য কন্টেন্ট
     if not priority:
         if 0 <= current_hour < 6:
             final_msg = ask_ai("রাত হয়েছে, ঘুমানোর কথা বলো।", recent_posts)
-            msg_type = "casual"
         else:
             dice = random.randint(1, 100)
             
-            # ৪০% চান্স: টেক সিরিজ (Important)
+            # ৪০% চান্স: টেক সিরিজ
             if dice <= 40:
                 msg_type = "important"
                 current_topic = "Tech Series"
-                task = f"আগের টপিক ছিল '{last_topic}'। এটার সাথে কানেক্ট করে নতুন একটা টেক টপিক বা টিউটোরিয়াল দাও। লেখাটা যেন আগেরটার পার্ট-২ মনে হয়।"
-                final_msg = ask_ai(task, recent_posts)
-                msg_summary = "Tech tutorial follow-up"
+                last_topic = recent_posts[-1]["topic"] if recent_posts else "Intro"
+                final_msg = ask_ai(f"আগের টপিক ছিল '{last_topic}'। এটার সাথে মিলিয়ে নতুন টেক টপিক শেখাও।", recent_posts)
+                msg_summary = "Tech Lesson"
+
+            # ২০% চান্স: আবহাওয়া (ধুনট) - এখন এটা কাজ করবে!
+            elif dice <= 60:
+                weather_data = get_weather()
+                if weather_data:
+                    task = f"Weather Data: '{weather_data}'। ধুনটের এই আবহাওয়া নিয়ে বন্ধুদের সাথে টেক বা লাইফ নিয়ে আড্ডা দাও। যেমন বৃষ্টি হলে ল্যাপটপ নিয়ে বসা, গরম হলে পিসি হিট হওয়া ইত্যাদি।"
+                    final_msg = ask_ai(task, recent_posts)
+                    current_topic = "Weather"
+                    msg_summary = "Weather update"
+                else:
+                    # আবহাওয়া না পেলে নিউজ
+                    news = get_latest_news()
+                    final_msg = ask_ai(f"News: {news}। এটা নিয়ে আলোচনা করো।", recent_posts)
 
             # ২০% চান্স: নিউজ
-            elif dice <= 60:
+            elif dice <= 80:
                 news = get_latest_news()
-                task = f"News: '{news}'। এটা নিয়ে টেক লাভারদের মতো করে ২ লাইন বলো।"
-                final_msg = ask_ai(task, recent_posts)
+                final_msg = ask_ai(f"News: {news}। এটা নিয়ে টেক লাভারদের মতো করে বলো।", recent_posts)
                 current_topic = "News"
-                msg_summary = f"Discussed news: {news}"
+                msg_summary = "News discussion"
 
-            # বাকি সময়: আড্ডা / মোটিভেশন
+            # বাকি সময়: আড্ডা
             else:
-                msg_type = "important" if dice > 80 else "casual"
-                task = "বন্ধুদের সাথে টেক বা লাইফ নিয়ে আড্ডা দাও। জিজ্ঞেস করো আগের পোস্টটা কাজে লেগেছে কিনা।"
-                final_msg = ask_ai(task, recent_posts)
-                current_topic = "Chat/Motivation"
-                msg_summary = "Casual chat"
+                final_msg = ask_ai("বন্ধুদের সাথে ধুনটের হালচাল বা টেক নিয়ে আড্ডা দাও।", recent_posts)
+                current_topic = "Chat"
 
-    # ধাপ ৩: মেসেজ পাঠানো ও সেভ
+    # মেসেজ পাঠানো
     if final_msg:
         print(f"Sending ({current_topic}): {final_msg[:50]}...")
         try:
             sent = bot.send_message(CHANNEL_ID, final_msg)
-            
-            # মেমোরিতে যোগ করা
             new_post = {
                 "id": sent.message_id,
                 "time": now.isoformat(),
@@ -230,12 +223,9 @@ def run_task():
                 "summary": msg_summary
             }
             history["recent_posts"].append(new_post)
-            
-            # সেভ এবং পুশ
             save_history(history)
-            git_push(HISTORY_FILE, f"Update history: {current_topic}")
-            print("History Synced!")
-            
+            git_push(HISTORY_FILE, f"Update: {current_topic}")
+            print("Done!")
         except Exception as e:
             print(f"Send Error: {e}")
 
