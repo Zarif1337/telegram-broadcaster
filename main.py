@@ -39,14 +39,16 @@ def git_push(file_name, commit_msg):
 genai.configure(api_key=GEMINI_KEY)
 
 system_prompt = """
-তুমি 'NoN-Technical' টেলিগ্রাম চ্যানেলের একজন হিউম্যান এডমিন। তোমার নাম জারা।
-অডিয়েন্স: বিগিনার টেক লাভার। এলাকা: ধুনট, রাজশাহী।
+তুমি 'NoN-Technical' টেলিগ্রাম চ্যানেলের একজন হিউম্যান এডমিন।
+অডিয়েন্স: বিগিনার টেক লাভার।
 ভাষা: Banglish (বাংলা + ইংলিশ মিক্স)। টোন: ফ্রেন্ডলি, ক্যাজুয়াল।
 
 কড়া নির্দেশ:
 ১. নিজেকে নতুন করে পরিচয় দিবে না।
-২. আবহাওয়া নিয়ে কথা বললে 'ধুনট' বা 'আমাদের এলাকায়' শব্দটি ব্যবহার করবে।
+২. মোটিভেশন দেওয়ার সময় ইসলামিক কাহিনী বা হাদীস, অথবা কুরআন এর আলোকে দিবে।
 ৩. চ্যাটিং স্টাইলে লিখবে।
+৪. একইসাথে বাংলা আর ইংলিশ টেক্সট এ লিখবে, মাঝে মাঝে বানান ভুল করবে কেনো অডিয়েন্স ভাবে যে মানুষ টাইপ করসে।
+৫. বার বার আগের পোস্ট গুলা তে রিএক্ট দিতে বলবে, চ্যানেল এ সাপোর্ট করতে বলবে।
 """
 
 generation_config = {
@@ -182,14 +184,14 @@ def run_task():
                 msg_type = "important"
                 current_topic = "Tech Series"
                 last_topic = recent_posts[-1]["topic"] if recent_posts else "Intro"
-                final_msg = ask_ai(f"আগের টপিক ছিল '{last_topic}'। এটার সাথে মিলিয়ে নতুন টেক টপিক শেখাও।", recent_posts)
+                final_msg = ask_ai(f"আগের টপিক ছিল '{last_topic}'। এটার সাথে মিলিয়ে নতুন টেক টপিক শেখাও। অ্যাপ রিভিউ, কোনো মজার ওয়েবসাইট, ai ট্রিকস, useful পাইথন লাইব্রেরী, ইত্যাদি যেকোনোটা pick করো", recent_posts)
                 msg_summary = "Tech Lesson"
 
             # ২০% চান্স: আবহাওয়া (ধুনট) - এখন এটা কাজ করবে!
             elif dice <= 60:
                 weather_data = get_weather()
                 if weather_data:
-                    task = f"Weather Data: '{weather_data}'। ধুনটের এই আবহাওয়া নিয়ে বন্ধুদের সাথে টেক বা লাইফ নিয়ে আড্ডা দাও। যেমন বৃষ্টি হলে ল্যাপটপ নিয়ে বসা, গরম হলে পিসি হিট হওয়া ইত্যাদি।"
+                    task = f"Weather Data: '{weather_data}'। এই আবহাওয়া নিয়ে বন্ধুদের সাথে টেক বা লাইফ নিয়ে আড্ডা দাও। যেমন খুশুড়ি বা মুরি খেতে বসা"
                     final_msg = ask_ai(task, recent_posts)
                     current_topic = "Weather"
                     msg_summary = "Weather update"
@@ -201,13 +203,13 @@ def run_task():
             # ২০% চান্স: নিউজ
             elif dice <= 80:
                 news = get_latest_news()
-                final_msg = ask_ai(f"News: {news}। এটা নিয়ে টেক লাভারদের মতো করে বলো।", recent_posts)
+                final_msg = ask_ai(f"News: {news}। এটা নিয়ে বুঝাইয়া বলো আর এইটাই তোমার মনের অবস্থা রসিকতা সাথে অথবা কষ্টের সাথ বলো।", recent_posts)
                 current_topic = "News"
                 msg_summary = "News discussion"
 
             # বাকি সময়: আড্ডা
             else:
-                final_msg = ask_ai("বন্ধুদের সাথে ধুনটের হালচাল বা টেক নিয়ে আড্ডা দাও।", recent_posts)
+                final_msg = ask_ai("বন্ধুদের সাথে হালচাল বা টেক নিয়ে আড্ডা দাও।", recent_posts)
                 current_topic = "Chat"
 
     # মেসেজ পাঠানো
