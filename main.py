@@ -168,7 +168,7 @@ def run_task():
                 p_time = datetime.strptime(time_str, "%H:%M").time()
                 p_dt = now.replace(hour=p_time.hour, minute=p_time.minute, second=0)
                 if abs((now - p_dt).total_seconds()) <= 900:
-                    final_msg = ask_ai(f"এখন {prayer_map[waqt]} নামাজের সময়। ধুনটের বন্ধুদের নামাজে ডাকো।", recent_posts)
+                    final_msg = ask_ai(f"এখন {prayer_map[waqt]} নামাজের সময়। বন্ধুদের নামাজে ডাকো।", recent_posts)
                     priority = True
                     break
     
