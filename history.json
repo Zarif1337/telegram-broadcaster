@@ -69,13 +69,6 @@
     ],
     "recent_posts": [
         {
-            "id": 924,
-            "time": "2026-02-05T14:53:31.496989+06:00",
-            "type": "important",
-            "topic": "Chat/Motivation",
-            "summary": "Casual chat"
-        },
-        {
             "id": 925,
             "time": "2026-02-05T15:53:19.870962+06:00",
             "type": "important",
@@ -167,8 +160,8 @@
             "summary": "Tech Lesson"
         },
         {
-            "id": 981,
-            "time": "2026-02-08T14:39:41.996942+06:00",
+            "id": 982,
+            "time": "2026-02-08T15:36:16.529314+06:00",
             "type": "casual",
             "topic": "Chat",
             "summary": "General"
