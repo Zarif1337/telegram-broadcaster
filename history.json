@@ -137,6 +137,13 @@
             "type": "important",
             "topic": "Tech Series",
             "summary": "Tech Lesson"
+        },
+        {
+            "id": 1052,
+            "time": "2026-02-12T23:11:33.676092+06:00",
+            "type": "casual",
+            "topic": "News",
+            "summary": "News discussion"
         }
     ]
 }
