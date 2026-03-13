@@ -151,6 +151,13 @@
             "type": "important",
             "topic": "Tech Series",
             "summary": "Tech Lesson"
+        },
+        {
+            "id": 1626,
+            "time": "2026-03-13T21:49:49.757318+06:00",
+            "type": "casual",
+            "topic": "News",
+            "summary": "News discussion"
         }
     ]
 }
