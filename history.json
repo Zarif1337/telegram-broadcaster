@@ -69,13 +69,6 @@
     ],
     "recent_posts": [
         {
-            "id": 1754,
-            "time": "2026-03-21T11:45:53.467692+06:00",
-            "type": "important",
-            "topic": "Tech Series",
-            "summary": "Tech Lesson"
-        },
-        {
             "id": 1757,
             "time": "2026-03-21T14:40:06.106484+06:00",
             "type": "important",
@@ -188,8 +181,8 @@
             "summary": "Tech Lesson"
         },
         {
-            "id": 1807,
-            "time": "2026-03-24T10:58:16.747088+06:00",
+            "id": 1808,
+            "time": "2026-03-24T12:08:13.689810+06:00",
             "type": "casual",
             "topic": "Chat",
             "summary": "General"
