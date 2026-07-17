@@ -69,13 +69,6 @@
     ],
     "recent_posts": [
         {
-            "id": 2960,
-            "time": "2026-07-14T22:21:38.546053+06:00",
-            "type": "important",
-            "topic": "Tech Series",
-            "summary": "Tech Lesson"
-        },
-        {
             "id": 2968,
             "time": "2026-07-15T17:37:54.072534+06:00",
             "type": "important",
@@ -90,11 +83,11 @@
             "summary": "Tech Lesson"
         },
         {
-            "id": 2990,
-            "time": "2026-07-17T22:18:39.881461+06:00",
+            "id": 2991,
+            "time": "2026-07-18T00:09:27.699283+06:00",
             "type": "casual",
-            "topic": "News",
-            "summary": "News discussion"
+            "topic": "Chat",
+            "summary": "General"
         }
     ]
 }
