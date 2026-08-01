@@ -7,7 +7,7 @@ import pytz
 
 # --- Setup ---
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
-CHANNEL_ID = "@YourChannelUsername" # IMPORTANT: Change this to your actual channel username
+CHANNEL_ID = "@Zarifbots" 
 bot = telebot.TeleBot(TOKEN)
 
 def get_namaz_times():
@@ -74,4 +74,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
